@@ -6,7 +6,7 @@
             <dd>
                 <ul>
                     <li id="brand-list"><a href="{{ url('brand/list')}}" title="品牌列表">品牌列表</a></li>
-                    <li id="brand-create"><a href="{{ url('brand/create')}}" title="品牌添加">品牌添加</a></li>
+                    {{--<li id="brand-create"><a href="{{ url('brand/create')}}" title="品牌添加">品牌添加</a></li>--}}
                 </ul>
             </dd>
         </dl>
@@ -14,8 +14,8 @@
             <dt><i class="Hui-iconfont">&#xe616;</i> 产品管理<i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
             <dd>
                 <ul>
-                    <li id="news-article"><a href="{{ url('admin/news/article/')}}" title="文章新闻">产品列表</a></li>
-                    <li id="news-pictures"><a href="{{ url('admin/news/pictures/')}}" title="图片新闻">产品添加</a></li>
+                    <li id="news-article"><a href="{{ url('product/list')}}" title="文章新闻">产品列表</a></li>
+                    {{--<li id="news-pictures"><a href="{{ url('admin/news/pictures/')}}" title="图片新闻">产品添加</a></li>--}}
                 </ul>
             </dd>
         </dl>

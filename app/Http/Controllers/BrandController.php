@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Product;
 use Illuminate\Http\Request;
 use App\Models\Brand;
 use App\Models\Type;
@@ -116,6 +117,7 @@ class BrandController extends Controller
     {
         $id = $request->input('id');
         $data = [];
+        $data['brand'] = Brand::find($id);
         $type = Type::where('is_hidden',0)->orderBy('tree', 'asc')->get(['id', 'name', 'level','pid']);
         $brandtype = Brand_type::where('brand_id',$id)->get();
         $root = [];
@@ -134,7 +136,7 @@ class BrandController extends Controller
             array_add($r,'child',$child);
         }
         $data['pid'] = $root;
-        return view('admin.brand.create',['data'=>$data]);
+        return view('admin.brand.edit',['data'=>$data]);
     }
 
     /**
@@ -155,8 +157,32 @@ class BrandController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
-    {
-        //
+    public function destroy(Request $request){
+        $model = Brand::find($request->input('id'));
+        if(!empty($model)){
+            if($model->delete()){
+                return response()->json(['code' => 200, 'msg' => '删除成功']);
+            }
+            return response()->json(['code' => 400, 'msg' => '删除失败']);
+        }
+        return response()->json(['code' => 204, 'msg' => '信息不存在']);
+    }
+
+    /**
+     * 操作新闻，启用禁用，审核类
+     */
+    public function handle(Request $request){
+        $model = Brand::find($request->input('id'));
+        if(!empty($model)){
+            $model->is_hidden = $request->input('is_hidden') == 0?1:0;
+            if($model->save()){
+                // return Redirect::back();
+                return response()->json(['code' => 200, 'msg' => '保存失败']);
+            }else{
+                return response()->json(['code' => 400, 'msg' => '操作失败']);
+            }
+        }else{
+            return response()->json(['code' => 204, 'msg' => '该新闻记录不存在']);
+        }
     }
 }

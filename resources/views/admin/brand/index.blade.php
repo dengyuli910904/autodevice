@@ -1,7 +1,7 @@
 <!-- 素材管理-图片管理-列表 -->
 @extends('admin.layouts.app')
 @section('content')
-	<nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 新闻管理 <span class="c-gray en">&gt;</span> 文章新闻 <a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a></nav>
+	<nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 品牌管理 <span class="c-gray en">&gt;</span> 品牌列表 <a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a></nav>
 	<div class="Hui-article">
 		<article class="cl pd-20">
 			<div class="text-c"> 日期范围：
@@ -9,14 +9,14 @@
 				-
 				<input type="text" onfocus="WdatePicker({minDate:'#F{$dp.$D(\'logmin\')}',maxDate:'%y-%M-%d'})" id="logmax" class="input-text Wdate" style="width:120px;">
 				<input type="text" name="" id="" placeholder=" 图片名称" style="width:250px" class="input-text">
-				<button name="" id="" class="btn btn-success" type="submit"><i class="Hui-iconfont">&#xe665;</i> 搜新闻</button>
+				<button name="" id="" class="btn btn-success" type="submit"><i class="Hui-iconfont">&#xe665;</i> 搜品牌</button>
 			</div>
 			<div class="cl pd-5 bg-1 bk-gray mt-20"> 
 				<span class="l">
 				<a href="javascript:;" onclick="datadel()" class="btn btn-danger radius">
 				<i class="Hui-iconfont">&#xe6e2;</i> 批量删除</a> 
-				<a class="btn btn-primary radius" onclick="picture_add('新增','{{ url('admin/news/article/create')}}' )" href="javascript:;">
-					<i class="Hui-iconfont">&#xe600;</i> 新增</a></span> <span class="r">共有数据：<strong>54</strong> 条</span> </div>
+				<a class="btn btn-primary radius" onclick="picture_add('新增','{{ url('brand/create')}}' )" href="javascript:;">
+					<i class="Hui-iconfont">&#xe600;</i> 新增</a></span> <span class="r">共有数据：<strong>{{ count($data) }}</strong> 条</span> </div>
 			<div class="mt-20">
 				<table class="table table-border table-bordered table-bg table-hover table-sort">
 					<thead>
@@ -38,14 +38,10 @@
 							<td>{{ $key+1 }}</td>
 							<td>{{ $p->name}}</td>
 							<td>
-								<a href="javascript:;" onClick="picture_show('编辑','{{ url('admin/news/article/edit') }}','{{ $p->id }}')">
-									<img width="100" class="picture-thumb" src="{{ $p->logo }}">
-								</a>
+								<img width="100" class="picture-thumb" src="{{ $p->logo }}">
 							</td>
 							<td class="text-l">
-								<a class="maincolor" href="javascript:;" onClick="picture_edit('编辑','{{ url('admin/news/article/edit') }}','{{ $p->id }}')">
 									{{ $p->description }}
-								</a>
 							</td>
 							<td>{{ $p->updated_at }}</td>
 							<td class="td-status">
@@ -69,7 +65,7 @@
 
 								 
 
-								<a style="text-decoration:none" class="ml-5" onClick="picture_edit('编辑','{{ url('admin/news/article/edit') }}','{{ $p->id }}')" href="javascript:;" title="编辑">
+								<a style="text-decoration:none" class="ml-5" onClick="picture_edit('编辑','{{ url('brand/edit') }}','{{ $p->id }}')" href="javascript:;" title="编辑">
 									<i class="Hui-iconfont">&#xe6df;</i>
 								</a> 
 

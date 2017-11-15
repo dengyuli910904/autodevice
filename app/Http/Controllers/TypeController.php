@@ -86,9 +86,16 @@ class TypeController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Request $request)
     {
-        //
+        $id = $request->input('id');
+        $type = Type::find($id);
+        if($type)
+        {
+            return view('admin.category.edit',['data'=>$type]);
+        }else{
+            return redirect()->back()->withInput()->withErrors('记录不存在');
+        }
     }
 
     /**
@@ -98,9 +105,33 @@ class TypeController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
-        //
+        $data = $request->all();
+        $type = Type::find($data['id']);
+        if($type)
+        {
+            $level = 0;
+            $tree = '';
+            if ($data['pid'] > 0) {
+                $pid = type::find($data['pid']);
+                if ($pid) {
+                    $level = $pid['level'] + 1;
+                    $tree = $pid['tree'];
+                }
+            }
+//            $type = new Type();
+            $type->pid = $data['pid'];
+            $type->name = $data['name'];
+            $type->description = !empty($data['description']) ? $data['description'] : '';
+            $type->level = $level;
+            $type->tree = $tree;
+            $type->save();
+            $type->tree = $data['pid'] > 0 ? $tree . '|[' . $type->id . ']' : '[' . $type->id . ']';
+            $type->save();
+        }else{
+            return redirect()->back()->withInput()->withErrors('记录不存在');
+        }
     }
 
     /**

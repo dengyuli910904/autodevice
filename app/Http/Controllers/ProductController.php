@@ -78,18 +78,6 @@ class ProductController extends Controller
             $product->is_sale = $data['is_sale'];
             $product->is_discounts = $data['is_discounts'];
 
-//            if(!empty($data['cover'])){
-//                $pic = explode(',',$data['cover']);
-//                $pictures = [];
-////                $product_pic = [];
-//                foreach ($pic as $p){
-//                    array_push($pictures,['id'=>UUID::generate(),'name' =>'','path' => $p]);
-//                }
-//                if(!empty($pictures)){
-//                    $result = DB::table('tb_pictures')->insertGetId($pictures);
-//                    var_dump($result);
-//                }
-//            }
 
             $product->save();
             if(!empty($data['cover'])){
@@ -133,9 +121,31 @@ class ProductController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Request $request)
     {
-        //
+        $id = $request->input('id');
+        $data = [];
+        $data['product'] = Product::find($id);
+        $type = Type::where('is_hidden',0)->orderBy('tree', 'asc')->get(['id', 'name', 'level','pid']);
+        $root = [];
+        foreach ($type as $val){
+            if($val->level == 0){
+//                $val->child = [];
+                array_push($root,$val);
+            }
+        }
+        foreach ($root as $r){
+            $child = [];
+            foreach ($type as $val){
+                if($r->id == $val->pid){
+                    array_push($child,$val);
+                }
+            }
+            array_add($r,'child',$child);
+        }
+//        return $root;
+        $data['pid'] = $root;
+        return view('admin.product.create',['data'=>$data]);
     }
 
     /**
@@ -147,7 +157,48 @@ class ProductController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $data = $request->all();
+
+        $product = Product::find($data['id']);
+        if($product){
+//            $product = new Product();
+//            $id = (string)UUID::generate();
+//            $product->id = $id;
+            $product->name = $data['name'];
+            $product->intro = $data['intro'];
+            $product->version = $data['version'];
+            $product->description = $data['editorValue'];
+//            $product->parameters = $data['parameters'];
+            $product->is_store = $data['is_store'];
+            $product->is_hidden = $data['is_hidden'];
+            $product->is_sale = $data['is_sale'];
+            $product->is_discounts = $data['is_discounts'];
+
+
+            $product->save();
+            DB::table('tb_product_pictures')->where('product_id',$product->id)->delete();
+            if(!empty($data['cover'])){
+                $pic = explode(',',$data['cover']);
+                $pictures = [];
+                $product_pic = [];
+                foreach ($pic as $p){
+                    if(!empty($p)){
+                        $pid = (string)UUID::generate();
+                        array_push($pictures,['id'=>(string)$pid,'name' =>'','path' => $p]);
+                        array_push($product_pic,['id'=>(string)$pid,'product_id'=>$id,'pictures_id'=>$pid]);
+                    }
+                }
+                //tb_product_pictures
+
+                if(!empty($pictures)){
+                    $result = DB::table('tb_pictures')->insert($pictures);
+                    DB::table('tb_product_pictures')->insert($product_pic);
+                }
+            }
+            return Redirect::back();
+        }else{
+            return Redirect::back()->withInput()->withErrors('该记录不存在');
+        }
     }
 
     /**
@@ -156,8 +207,32 @@ class ProductController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
-    {
-        //
+    public function destroy(Request $request){
+        $model = Product::find($request->input('id'));
+        if(!empty($model)){
+            if($model->delete()){
+                return response()->json(['code' => 200, 'msg' => '删除成功']);
+            }
+            return response()->json(['code' => 400, 'msg' => '删除失败']);
+        }
+        return response()->json(['code' => 204, 'msg' => '信息不存在']);
+    }
+
+    /**
+     * 操作新闻，启用禁用，审核类
+     */
+    public function handle(Request $request){
+        $model = Product::find($request->input('id'));
+        if(!empty($model)){
+            $model->is_hidden = $request->input('is_hidden') == 0?1:0;
+            if($model->save()){
+                // return Redirect::back();
+                return response()->json(['code' => 200, 'msg' => '保存失败']);
+            }else{
+                return response()->json(['code' => 400, 'msg' => '操作失败']);
+            }
+        }else{
+            return response()->json(['code' => 204, 'msg' => '该新闻记录不存在']);
+        }
     }
 }
