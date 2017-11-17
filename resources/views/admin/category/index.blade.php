@@ -16,7 +16,7 @@
 				<a href="javascript:;" onclick="datadel()" class="btn btn-danger radius">
 				<i class="Hui-iconfont">&#xe6e2;</i> 批量删除</a> 
 				<a class="btn btn-primary radius" onclick="picture_add('新增','{{ url('type/create')}}' )" href="javascript:;">
-					<i class="Hui-iconfont">&#xe600;</i> 新增</a></span> <span class="r">共有数据：<strong>54</strong> 条</span> </div>
+					<i class="Hui-iconfont">&#xe600;</i> 新增</a></span> <span class="r">共有数据：<strong>{{ count($data) }}</strong> 条</span> </div>
             <div class="mt-20">
                 <table class="table table-border table-bordered table-bg table-hover table-sort">
                     <thead>
@@ -49,11 +49,11 @@
                             </td>
                             <td class="td-manage">
                                 @if(!$val->is_hidden )
-                                    <a style="text-decoration:none" onClick="picture_stop(this,'{{ $val->id }}','0','{{$val->is_hidden}}')" href="javascript:;" title="隐藏">
+                                    <a style="text-decoration:none" onClick="picture_stop(this,'{{ $val->id }}')" href="javascript:;" title="隐藏">
                                         <i class="Hui-iconfont">&#xe6de;</i>
                                     </a>
                                 @else
-                                    <a style="text-decoration:none" onClick="picture_start(this,'{{ $val->id }}','0','{{$val->is_hidden}}')" href="javascript:;" title="显示">
+                                    <a style="text-decoration:none" onClick="picture_start(this,'{{ $val->id }}')" href="javascript:;" title="显示">
                                         <i class="Hui-iconfont">&#xe6dc;</i>
                                     </a>
                                 @endif
@@ -128,7 +128,7 @@
         function picture_stop(obj,id){
             layer.confirm('确认要下架吗？',function(index){
                 $.ajax({
-                    url: "/admin/category/handle",
+                    url: "handle",
                     type:'post',
                     data:{
                         _method: 'put',
@@ -138,7 +138,7 @@
                     dataType: 'json',
                     success: function(data){
                         if(data['code'] == 200){
-                            $(obj).parents("tr").find(".td-manage").prepend('<a style="text-decoration:none" onClick="picture_start(this,id)" href="javascript:;" title="显示"><i class="Hui-iconfont">&#xe603;</i></a>');
+                            $(obj).parents("tr").find(".td-manage").prepend('<a style="text-decoration:none" onClick="picture_start(this,id)" href="javascript:;" title="显示"><i class="Hui-iconfont">&#xe6dc;</i></a>');
                             $(obj).parents("tr").find(".td-status").html('<span class="label label-defaunt radius">隐藏</span>');
                             $(obj).remove();
                             layer.msg('操作成功!',{icon: 5,time:1000});
@@ -155,7 +155,7 @@
         function picture_start(obj,id){
             layer.confirm('确认要发布吗？',function(index){
                 $.ajax({
-                    url: "/admin/category/handle",
+                    url: "handle",
                     type:'post',
                     data:{
                         _method: 'put',
@@ -177,14 +177,8 @@
 
             });
         }
-        /*图片-申请上线*/
-        // function picture_shenqing(obj,id){
-        // 	$(obj).parents("tr").find(".td-status").html('<span class="label label-default radius">待审核</span>');
-        // 	$(obj).parents("tr").find(".td-manage").html("");
-        // 	layer.msg('已提交申请，耐心等待审核!', {icon: 1,time:2000});
-        // }
 
-        /*图片-编辑*/
+        /*-编辑*/
         function picture_edit(title,url,id){
             var index = layer.open({
                 type: 2,
@@ -193,11 +187,11 @@
             });
             layer.full(index);
         }
-        /*图片-删除*/
+        /*-删除*/
         function picture_del(obj,id){
             layer.confirm('确认要删除吗？',function(index){
                 $.ajax({
-                    url: "/admin/category/delete",
+                    url: "delete",
                     type:'post',
                     data:{
                         _method: 'delete',

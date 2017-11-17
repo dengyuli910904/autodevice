@@ -50,6 +50,7 @@ Route::group(['prefix'=>'type'],function(){
     route::post('store','TypeController@store');
     route::put('update','TypeController@update');
     route::delete('delete','TypeController@destory');
+    route::put('handle','TypeController@handle');
 });
 // 新闻路由
 Route::group(['prefix'=>'news'],function(){
@@ -59,6 +60,7 @@ Route::group(['prefix'=>'news'],function(){
     route::post('store','NewsController@store');
     route::put('update','NewsController@update');
     route::delete('delete','NewsController@destory');
+    route::put('handle','NewsController@handle');
 });
 // 招聘路由
 Route::group(['prefix'=>'jobs'],function(){
@@ -68,6 +70,7 @@ Route::group(['prefix'=>'jobs'],function(){
     route::post('store','JobsController@store');
     route::put('update','JobsController@update');
     route::delete('delete','JobsController@destory');
+    route::put('handle','JobsController@handle');
 });
 // 首页管理路由
 Route::group(['prefix'=>'homepage'],function(){
@@ -77,4 +80,6 @@ Route::group(['prefix'=>'homepage'],function(){
     route::post('store','HomepageController@store');
     route::put('update','HomepageController@update');
     route::delete('delete','HomepageController@destory');
+    route::put('handle','HomepageController@handle');
 });
+

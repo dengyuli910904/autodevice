@@ -9,7 +9,7 @@
 @section('content')
     <div class="page-container">
         <form class="form form-horizontal" id="form-article-add" action="{{ url('product/update') }}" method="POST">
-            <input type="_hidden" name="method" value="PUT">
+            <input type="hidden" value="PUT" name="_method">
             @if (count($errors) > 0)
                 <div class="row cl">
                     <label class="form-label col-3"></label>
@@ -26,43 +26,43 @@
             <div class="row cl">
                 <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>产品名称：</label>
                 <div class="formControls col-xs-8 col-sm-9">
-                    <input type="text" class="input-text" value="{{$data->name}}" placeholder="" id="name" name="name">
+                    <input type="text" class="input-text" value="{{$data['product']->name}}" placeholder="" id="name" name="name">
                 </div>
             </div>
             <div class="row cl">
                 <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>产品简介：</label>
                 <div class="formControls col-xs-8 col-sm-9">
-                    <textarea class="input-text" name="intro" rows="3" placeholder="产品简介">{{$data->intro}}</textarea>
+                    <textarea class="input-text" name="intro" rows="3" placeholder="产品简介">{{$data['product']->intro}}</textarea>
                 </div>
             </div>
             <div class="row cl">
                 <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>产品版本：</label>
                 <div class="formControls col-xs-8 col-sm-9">
-                    <input type="text" class="input-text" value="{{$data->version}}" placeholder="" id="" name="version">
+                    <input type="text" class="input-text" value="{{$data['product']->version}}" placeholder="" id="" name="version">
                 </div>
             </div>
             <div class="row cl">
                 <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>是否有库存：</label>
                 <div class="formControls col-xs-8 col-sm-9">
-                    <label><input type="radio" name="is_store" value="1" @if($data-is_store ==1) selected="selected"@endif>有库存</label>
+                    <label><input type="checkbox" name="is_store" value="1" @if($data['product']->is_store ==1) checked="true"@endif>有库存</label>
                 </div>
             </div>
             <div class="row cl">
-                <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>是否显示：</label>
+                <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>是否隐藏：</label>
                 <div class="formControls col-xs-8 col-sm-9">
-                    <label><input type="radio" name="is_hidden" value="0" @if($data-is_hidden ==1) selected="selected"@endif>显示</label>
+                    <label><input type="checkbox" name="is_hidden"  value="1"  @if($data['product']->is_hidden == 1) checked="true"@endif>隐藏</label>
                 </div>
             </div>
             <div class="row cl">
                 <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>是否特价：</label>
                 <div class="formControls col-xs-8 col-sm-9">
-                    <label><input type="radio" name="is_sale" value="1" @if($data-is_sale ==1) selected="selected"@endif>特价</label>
+                    <label><input type="checkbox" name="is_sale" value="1" @if($data['product']->is_sale ==1) checked="true"@endif>特价</label>
                 </div>
             </div>
             <div class="row cl">
                 <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>是否优惠：</label>
                 <div class="formControls col-xs-8 col-sm-9">
-                    <label><input type="radio" name="is_discounts" value="1" @if($data-is_discounts ==1) selected="selected"@endif>优惠</label>
+                    <label><input type="checkbox" name="is_discounts" value="1" @if($data['product']->is_discounts ==1) checked="true"@endif>优惠</label>
                 </div>
             </div>
 
@@ -75,11 +75,11 @@
                         @foreach($data['pid'] as $p)
                             <tr>
                                 <td style="width: 150px;">
-                                    <label><input type="checkbox" name="pid[]" value="{{$p->id}}">{{$p->name}}</label>
+                                    <label><input type="checkbox" name="pid[]" @if($p->ischoose) checked="true"@endif value="{{$p->id}}">{{$p->name}}</label>
                                 </td>
                                 <td>
                                     @foreach($p->child as $c)
-                                        <label><input type="checkbox" name="pid[]" value="{{$c->id}}">{{$c->name}}</label>
+                                        <label><input type="checkbox" name="pid[]"  @if($p->ischoose) checked="true"@endif value="{{$c->id}}">{{$c->name}}</label>
                                     @endforeach
                                 </td>
                             </tr>
@@ -120,8 +120,10 @@
                     </div>
 
 
-                    <input type="hidden" name="cover" id="cover" value=" ">
-                        <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                    <input type="hidden" name="cover" id="cover" value="">
+                            <input type="hidden" name="id" value="{{$data['product']->id}}">
+{{--                        <input type="hidden" name="_token" value="{{ csrf_token() }}">--}}
+                            <input type="hidden" id="content" value="{{$data['product']->description}}"/>
                         <div class="row cl">
                         <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-2">
                         <!-- <button onClick="article_save_submit();" class="btn btn-primary radius" type="submit"><i class="Hui-iconfont">&#xe632;</i> 保存并提交审核</button> -->
@@ -142,6 +144,11 @@
                     <script type="text/javascript">
                         $(function(){
                             var ue = UE.getEditor('editor');
+                            ue.ready(function(){
+                                //因为Laravel有防csrf防伪造攻击的处理所以加上此行
+                                ue.execCommand('serverparam','_token','{{ csrf_token() }}');
+                                ue.setContent($('#content').val());
+                            });
                         });
                         $(function(){
                             $('#permission_text').change(function(){

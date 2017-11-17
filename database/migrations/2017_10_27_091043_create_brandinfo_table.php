@@ -18,6 +18,7 @@ class CreateBrandinfoTable extends Migration
             $table->string('logo')->nullable();
             $table->text('description')->nullable();
             $table->string('name');
+            $table->integer('is_hidden')->default(0);//是否隐藏，0 不隐藏，1隐藏
             $table->timestamps();
         });
     }

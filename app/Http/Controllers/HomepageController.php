@@ -123,7 +123,7 @@ class HomepageController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Request $request){
+    public function destory(Request $request){
         $model = Homepage::find($request->input('id'));
         if(!empty($model)){
             if($model->delete()){

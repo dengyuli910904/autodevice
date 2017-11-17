@@ -136,7 +136,7 @@
 	function picture_stop(obj,id){
 		layer.confirm('确认要下架吗？',function(index){
 			$.ajax({
-	              url: "/admin/material/pictures/handle",
+	              url: "handle",
 	              type:'post',
 	              data:{
 	                   _method: 'put',
@@ -163,7 +163,7 @@
 	function picture_start(obj,id){
 		layer.confirm('确认要发布吗？',function(index){
 			$.ajax({
-	              url: "/admin/material/pictures/handle",
+	              url: "handle",
 	              type:'post',
 	              data:{
 	                   _method: 'put',
@@ -185,14 +185,8 @@
 			
 		});
 	}
-	/*图片-申请上线*/
-	// function picture_shenqing(obj,id){
-	// 	$(obj).parents("tr").find(".td-status").html('<span class="label label-default radius">待审核</span>');
-	// 	$(obj).parents("tr").find(".td-manage").html("");
-	// 	layer.msg('已提交申请，耐心等待审核!', {icon: 1,time:2000});
-	// }
 
-	/*图片-编辑*/
+	/*-编辑*/
 	function picture_edit(title,url,id){
 		var index = layer.open({
 			type: 2,
@@ -201,11 +195,11 @@
 		});
 		layer.full(index);
 	}
-	/*图片-删除*/
+	/*-删除*/
 	function picture_del(obj,id){
 		layer.confirm('确认要删除吗？',function(index){
 			$.ajax({
-	              url: "/admin/news/article/delete",
+	              url: "delete",
 	              type:'post',
 	              data:{
 	                   _method: 'delete',

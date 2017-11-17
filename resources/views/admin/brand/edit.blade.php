@@ -64,7 +64,7 @@
                 <script id="editor" type="text/plain" style="width:100%;height:400px;"></script>
                 </div>
                 </div>
-        <input type="hidden" name="cover" id="cover" value="{{ $data['brand']->cover}}">
+        <input type="hidden" name="cover" id="cover" value="{{ $data['brand']->logo}}">
         <input type="hidden" name="id" id="id" value="{{ $data['brand']->id}}">
 		<div class="row cl">
 			<div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-2">

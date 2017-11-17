@@ -120,7 +120,7 @@ class NewsController extends Controller
     /**
      * 删除新闻
      */
-    public function destroy(Request $request){
+    public function destory(Request $request){
         $model = News::find($request->input('id'));
         if(!empty($model)){
             if($model->delete()){

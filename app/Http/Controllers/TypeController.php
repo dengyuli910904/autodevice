@@ -88,11 +88,22 @@ class TypeController extends Controller
      */
     public function edit(Request $request)
     {
+
         $id = $request->input('id');
         $type = Type::find($id);
         if($type)
         {
-            return view('admin.category.edit',['data'=>$type]);
+            $data = [];
+            $data['type'] = $type;
+            $data['pid'] = Type::where('level', '<', 2)->orderBy('tree', 'asc')->get(['id', 'name', 'level']);
+            if($type->level != 0){
+                foreach ($data['pid'] as $p){
+                    if($type->pid == $p->id){
+
+                    }
+                }
+            }
+            return view('admin.category.edit',['data'=>$data]);
         }else{
             return redirect()->back()->withInput()->withErrors('记录不存在');
         }
@@ -140,8 +151,32 @@ class TypeController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
-    {
-        //
+    public function destory(Request $request){
+        $model = Type::find($request->input('id'));
+        if(!empty($model)){
+            if($model->delete()){
+                return response()->json(['code' => 200, 'msg' => '删除成功']);
+            }
+            return response()->json(['code' => 400, 'msg' => '删除失败']);
+        }
+        return response()->json(['code' => 204, 'msg' => '信息不存在']);
+    }
+
+    /**
+     * 操作新闻，启用禁用，审核类
+     */
+    public function handle(Request $request){
+        $model = Type::find($request->input('id'));
+        if(!empty($model)){
+            $model->is_hidden = $request->input('is_hidden');
+            if($model->save()){
+                // return Redirect::back();
+                return response()->json(['code' => 200, 'msg' => '保存失败']);
+            }else{
+                return response()->json(['code' => 400, 'msg' => '操作失败']);
+            }
+        }else{
+            return response()->json(['code' => 204, 'msg' => '该新闻记录不存在']);
+        }
     }
 }

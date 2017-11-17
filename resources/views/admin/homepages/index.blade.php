@@ -69,7 +69,7 @@
                                         <i class="Hui-iconfont">&#xe6dc;</i>
                                     </a>
                                 @endif
-                                    <a style="text-decoration:none" class="ml-5" onClick="picture_edit('编辑','{{ url('admin/homepages/edit') }}','{{ $val->uuid }}')" href="javascript:;" title="编辑">
+                                    <a style="text-decoration:none" class="ml-5" onClick="picture_edit('编辑','{{ url('homepage/edit') }}','{{ $val->uuid }}')" href="javascript:;" title="编辑">
                                         <i class="Hui-iconfont">&#xe6df;</i>
                                     </a>
 
@@ -140,7 +140,7 @@
         function picture_stop(obj,id){
             layer.confirm('确认要下架吗？',function(index){
                 $.ajax({
-                    url: "/admin/homepages/handle",
+                    url: "homepage/handle",
                     type:'post',
                     data:{
                         _method: 'put',
@@ -167,7 +167,7 @@
         function picture_start(obj,id){
             layer.confirm('确认要发布吗？',function(index){
                 $.ajax({
-                    url: "/admin/homepages/handle",
+                    url: "homepage/handle",
                     type:'post',
                     data:{
                         _method: 'put',
@@ -209,7 +209,7 @@
         function picture_del(obj,id){
             layer.confirm('确认要删除吗？',function(index){
                 $.ajax({
-                    url: "/admin/homepages/delete",
+                    url: "homepage/delete",
                     type:'post',
                     data:{
                         _method: 'delete',

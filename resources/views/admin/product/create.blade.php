@@ -43,25 +43,25 @@
 		<div class="row cl">
 			<label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>是否有库存：</label>
 			<div class="formControls col-xs-8 col-sm-9">
-				<label><input type="radio" name="is_store" value="1">有库存</label>
+				<label><input type="checkbox" name="is_store" value="1">有库存</label>
 			</div>
 		</div>
 		<div class="row cl">
 			<label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>是否显示：</label>
 			<div class="formControls col-xs-8 col-sm-9">
-				<label><input type="radio" name="is_hidden" value="0">显示</label>
+				<label><input type="checkbox" name="is_hidden" value="0">显示</label>
 			</div>
 		</div>
 		<div class="row cl">
 			<label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>是否特价：</label>
 			<div class="formControls col-xs-8 col-sm-9">
-				<label><input type="radio" name="is_sale" value="1">有库存</label>
+				<label><input type="checkbox" name="is_sale" value="1">有库存</label>
 			</div>
 		</div>
 		<div class="row cl">
 			<label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>是否优惠：</label>
 			<div class="formControls col-xs-8 col-sm-9">
-				<label><input type="radio" name="is_discounts" value="1">优惠</label>
+				<label><input type="checkbox" name="is_discounts" value="1">优惠</label>
 			</div>
 		</div>
 

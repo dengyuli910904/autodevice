@@ -8,6 +8,7 @@ use App\Models\Type;
 use Illuminate\Support\Facades\Redirect;
 use DB;
 use UUID;
+use App\Models\Product_type;
 
 
 class ProductController extends Controller
@@ -80,6 +81,14 @@ class ProductController extends Controller
 
 
             $product->save();
+            if(!empty($data['pid'])){
+                $pid = [];
+                foreach ($data['pid'] as $p){
+                    array_push($pid,['id'=>UUID::generate(),'brand_id'=>$id,'type_id'=>$p]);
+                }
+                $brandtype = DB::table('tb_product_type')->insert($pid);
+            }
+
             if(!empty($data['cover'])){
                 $pic = explode(',',$data['cover']);
                 $pictures = [];
@@ -127,10 +136,16 @@ class ProductController extends Controller
         $data = [];
         $data['product'] = Product::find($id);
         $type = Type::where('is_hidden',0)->orderBy('tree', 'asc')->get(['id', 'name', 'level','pid']);
+        $ptype = Product_type::where('product_id',$id)->select('type_id')->get();
         $root = [];
         foreach ($type as $val){
             if($val->level == 0){
-//                $val->child = [];
+                $val->ischoose = false;
+                foreach ($ptype as $pt){
+                    if($val->id == $pt->type_id){
+                        $val->ischoose = true;
+                    }
+                }
                 array_push($root,$val);
             }
         }
@@ -138,6 +153,12 @@ class ProductController extends Controller
             $child = [];
             foreach ($type as $val){
                 if($r->id == $val->pid){
+                    $val->ischoose = false;
+                    foreach ($ptype as $pt){
+                        if($val->id == $pt->type_id){
+                            $val->ischoose = true;
+                        }
+                    }
                     array_push($child,$val);
                 }
             }
@@ -145,7 +166,7 @@ class ProductController extends Controller
         }
 //        return $root;
         $data['pid'] = $root;
-        return view('admin.product.create',['data'=>$data]);
+        return view('admin.product.edit',['data'=>$data]);
     }
 
     /**
@@ -155,10 +176,10 @@ class ProductController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
         $data = $request->all();
-
+//        return $data;
         $product = Product::find($data['id']);
         if($product){
 //            $product = new Product();
@@ -169,13 +190,41 @@ class ProductController extends Controller
             $product->version = $data['version'];
             $product->description = $data['editorValue'];
 //            $product->parameters = $data['parameters'];
-            $product->is_store = $data['is_store'];
-            $product->is_hidden = $data['is_hidden'];
-            $product->is_sale = $data['is_sale'];
-            $product->is_discounts = $data['is_discounts'];
+            $product->is_store = 0;
+            $product->is_hidden = 0;
+            $product->is_sale = 0;
+            $product->is_discounts = 0;
+            if($request->has('is_store')){
+                $product->is_store = $data['is_store'];
+            }
+            if($request->has('is_hidden')){
+                $product->is_hidden = $data['is_hidden'];
+            }
+
+            if($request->has('is_sale')){
+                $product->is_sale = $data['is_sale'];
+            }
+
+            if($request->has('is_discounts')){
+                $product->is_discounts = $data['is_discounts'];
+            }
+
+//            $product->is_hidden = $data['is_hidden'];
+//            $product->is_sale = $data['is_sale'];
+//            $product->is_discounts = $data['is_discounts'];
 
 
             $product->save();
+            DB::table('tb_product_type')->where('product_id',$product->id)->delete();
+            if(!empty($data['pid'])){
+                $pid = [];
+                foreach ($data['pid'] as $p){
+                    array_push($pid,['id'=>UUID::generate(),'product_id'=>$product->id,'type_id'=>$p]);
+                }
+                $brandtype = DB::table('tb_product_type')->insert($pid);
+            }
+
+
             DB::table('tb_product_pictures')->where('product_id',$product->id)->delete();
             if(!empty($data['cover'])){
                 $pic = explode(',',$data['cover']);
@@ -185,7 +234,7 @@ class ProductController extends Controller
                     if(!empty($p)){
                         $pid = (string)UUID::generate();
                         array_push($pictures,['id'=>(string)$pid,'name' =>'','path' => $p]);
-                        array_push($product_pic,['id'=>(string)$pid,'product_id'=>$id,'pictures_id'=>$pid]);
+                        array_push($product_pic,['id'=>(string)$pid,'product_id'=>$product->id,'pictures_id'=>$pid]);
                     }
                 }
                 //tb_product_pictures
@@ -207,7 +256,7 @@ class ProductController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Request $request){
+    public function destory(Request $request){
         $model = Product::find($request->input('id'));
         if(!empty($model)){
             if($model->delete()){
@@ -224,7 +273,7 @@ class ProductController extends Controller
     public function handle(Request $request){
         $model = Product::find($request->input('id'));
         if(!empty($model)){
-            $model->is_hidden = $request->input('is_hidden') == 0?1:0;
+            $model->is_hidden = $request->input('is_hidden');
             if($model->save()){
                 // return Redirect::back();
                 return response()->json(['code' => 200, 'msg' => '保存失败']);

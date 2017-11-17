@@ -131,7 +131,7 @@
 	function picture_stop(obj,id){
 		layer.confirm('确认要下架吗？',function(index){
 			$.ajax({
-	              url: "/admin/material/pictures/handle",
+	              url: "news/handle",
 	              type:'post',
 	              data:{
 	                   _method: 'put',
@@ -158,7 +158,7 @@
 	function picture_start(obj,id){
 		layer.confirm('确认要发布吗？',function(index){
 			$.ajax({
-	              url: "/admin/material/pictures/handle",
+	              url: "news/handle",
 	              type:'post',
 	              data:{
 	                   _method: 'put',
@@ -200,7 +200,7 @@
 	function picture_del(obj,id){
 		layer.confirm('确认要删除吗？',function(index){
 			$.ajax({
-	              url: "/admin/news/article/delete",
+	              url: "news/delete",
 	              type:'post',
 	              data:{
 	                   _method: 'delete',

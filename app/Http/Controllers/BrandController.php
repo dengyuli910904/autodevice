@@ -116,27 +116,33 @@ class BrandController extends Controller
     public function edit(Request $request)
     {
         $id = $request->input('id');
-        $data = [];
-        $data['brand'] = Brand::find($id);
-        $type = Type::where('is_hidden',0)->orderBy('tree', 'asc')->get(['id', 'name', 'level','pid']);
-        $brandtype = Brand_type::where('brand_id',$id)->get();
-        $root = [];
-        foreach ($type as $val){
-            if($val->level == 0){
-                array_push($root,$val);
-            }
-        }
-        foreach ($root as $r){
-            $child = [];
+        $brand = Brand::find($id);
+        if($brand){
+            $data = [];
+            $data['brand'] = $brand;
+            $type = Type::where('is_hidden',0)->orderBy('tree', 'asc')->get(['id', 'name', 'level','pid']);
+            $brandtype = Brand_type::where('brand_id',$id)->get();
+            $root = [];
             foreach ($type as $val){
-                if($r->id == $val->pid){
-                    array_push($child,$val);
+                if($val->level == 0){
+                    array_push($root,$val);
                 }
             }
-            array_add($r,'child',$child);
+            foreach ($root as $r){
+                $child = [];
+                foreach ($type as $val){
+                    if($r->id == $val->pid){
+                        array_push($child,$val);
+                    }
+                }
+                array_add($r,'child',$child);
+            }
+            $data['pid'] = $root;
+            return view('admin.brand.edit',['data'=>$data]);
+        }else{
+            return Redirect::back()->withInput()->withErrors('该记录不存在');
         }
-        $data['pid'] = $root;
-        return view('admin.brand.edit',['data'=>$data]);
+
     }
 
     /**
@@ -146,9 +152,27 @@ class BrandController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
-        //
+        $data = $request->all();
+        $brand = Brand::find($data['id']);
+        if($brand){
+            $brand->name = $data['name'];
+            $brand->description = $data['editorValue'];
+            $brand->logo = $data['cover'];
+            $result = $brand->save();
+            //TODO::此处应改成用事务处理
+            if(!empty($data['pid'])){
+                $pid = [];
+                foreach ($data['pid'] as $p){
+                    array_push($pid,['id'=>UUID::generate(),'brand_id'=>$id,'type_id'=>$p]);
+                }
+                $brandtype = DB::table('tb_brand_type')->insert($pid);
+            }
+            return Redirect::back();//->withErrors('该品牌已经存在');
+        }else{
+            return Redirect::back()->withInput()->withErrors('该记录不存在');
+        }
     }
 
     /**
@@ -157,7 +181,7 @@ class BrandController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Request $request){
+    public function destory(Request $request){
         $model = Brand::find($request->input('id'));
         if(!empty($model)){
             if($model->delete()){
@@ -174,7 +198,7 @@ class BrandController extends Controller
     public function handle(Request $request){
         $model = Brand::find($request->input('id'));
         if(!empty($model)){
-            $model->is_hidden = $request->input('is_hidden') == 0?1:0;
+            $model->is_hidden = $request->input('is_hidden');
             if($model->save()){
                 // return Redirect::back();
                 return response()->json(['code' => 200, 'msg' => '保存失败']);
