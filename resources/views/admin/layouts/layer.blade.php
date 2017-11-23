@@ -3,6 +3,9 @@
 <html>
 <head>
 @include('admin.profile._meta')
+    <style>
+        table.table td { border: 1px solid #e5e5e5;}
+    </style>
 @yield('styles')
 
 </head>

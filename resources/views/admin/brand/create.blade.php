@@ -3,7 +3,7 @@
 @section('styles')
 	<link href="{{ asset('admin/lib/webuploader/0.1.5/webuploader.css') }}" rel="stylesheet" type="text/css" />
 	<style>
-		.table tr td { border: 1px solid #e5e5e5;}
+		table.table td { border: 1px solid #e5e5e5;}
 	</style>
 @endsection
 @section('content')
@@ -32,16 +32,16 @@
 		<div class="row cl">
 			<label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>品牌类型：</label>
 			<div class="form-controls col-xs-8 col-sm-9">
-				<table class="table">
+				<table class="table" id="category">
 					<tbody>
 					@foreach($data['pid'] as $p)
 						<tr>
-							<td style="width: 150px;">
+							<td style="width: 150px;" class="parent_type">
 								<label><input type="checkbox" name="pid[]" value="{{$p->id}}">{{$p->name}}</label>
 							</td>
-							<td>
+							<td class="child-type">
 								@foreach($p->child as $c)
-									<label><input type="checkbox" name="pid[]" value="{{$c->id}}">{{$c->name}}</label>
+									<label><input type="checkbox" disabled="true" name="pid[]" value="{{$c->id}}">{{$c->name}}</label>
 									@endforeach
 							</td>
 						</tr>
@@ -125,24 +125,32 @@ $(function(){
     var ue = UE.getEditor('editor');
 });
 $(function(){
-    $('#permission_text').change(function(){
-        var searchStr = $(this).val();
-        if (searchStr) {
-            var flag = 0;
-            var options = $('#permission_list').children();
-            for (var i = 0, len = options.length; i < len; i++) {
-                if (!flag && $(options[i]).text().indexOf(searchStr) >= 0) {
-                    flag = 1;
-                    $(options[i]).attr('selected', 'selected');
-                    break;
-                }
-            }
-            if (!flag) {
-                $('#permission_list option:first').attr('selected', 'selected');
-            }
-        }
-    });
+    $('#category tr td.parent_type :checkbox').change(function(){
+			if(!$(this)[0].checked){
+				$(this).parents('tr').find('.child-type :checkbox').attr('checked',false);
+			}
 
+            $(this).parents('tr').find('.child-type :checkbox').attr('disabled',!$(this)[0].checked);
+//		}
+
+	});
+//    $('#permission_text').change(function(){
+//        var searchStr = $(this).val();
+//        if (searchStr) {
+//            var flag = 0;
+//            var options = $('#permission_list').children();
+//            for (var i = 0, len = options.length; i < len; i++) {
+//                if (!flag && $(options[i]).text().indexOf(searchStr) >= 0) {
+//                    flag = 1;
+//                    $(options[i]).attr('selected', 'selected');
+//                    break;
+//                }
+//            }
+//            if (!flag) {
+//                $('#permission_list option:first').attr('selected', 'selected');
+//            }
+//        }
+//    });
 });
 
 

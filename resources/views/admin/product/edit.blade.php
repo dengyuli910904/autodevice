@@ -75,11 +75,11 @@
                         @foreach($data['pid'] as $p)
                             <tr>
                                 <td style="width: 150px;">
-                                    <label><input type="checkbox" name="pid[]" @if($p->ischoose) checked="true"@endif value="{{$p->id}}">{{$p->name}}</label>
+                                    <label><input type="checkbox" name="pid[]" @if($p->is_choose) checked="true"@endif value="{{$p->id}}">{{$p->name}}</label>
                                 </td>
                                 <td>
                                     @foreach($p->child as $c)
-                                        <label><input type="checkbox" name="pid[]"  @if($p->ischoose) checked="true"@endif value="{{$c->id}}">{{$c->name}}</label>
+                                        <label><input type="checkbox" name="pid[]"  @if($c->is_choose) checked="true"@endif value="{{$c->id}}">{{$c->name}}</label>
                                     @endforeach
                                 </td>
                             </tr>
@@ -96,6 +96,23 @@
                 <div class="formControls col-xs-8 col-sm-9">
                     <div class="uploader-list-container">
                         <div class="queueList">
+                            <ul class="filelist">
+                                @foreach ($data['logo'] as $url)
+                                <li id="WU_FILE_{{$url}}">
+                                    <p class="title">74f318b21836f544bec5ecf8a14bdf0c.png</p>
+                                    <p class="imgWrap">
+                                        <img src="{{ $url }}">
+                                    </p>
+                                    <p class="progress"><span></span></p>
+                                    <div class="file-panel" style="height: 0px;">
+                                        <span class="cancel">删除</span>
+                                        <span class="rotateRight">向右旋转</span>
+                                        <span class="rotateLeft">向左旋转</span>
+                                    </div>
+                                </li>
+                                @endforeach
+                            </ul>
+
                             <div id="dndArea" class="placeholder">
                                 <div id="filePicker-2"></div>
                                 <p>或将照片拖到这里，单次最多可选10张</p>
@@ -341,6 +358,46 @@
                                     fileSingleSizeLimit: 50 * 1024 * 1024    // 50 M
                                 });
 
+
+
+                                var getFileBlob = function (url, cb) {
+                                    var xhr = new XMLHttpRequest();
+                                    xhr.open("GET", url);
+                                    xhr.responseType = "blob";
+                                    xhr.addEventListener('load', function() {
+                                        cb(xhr.response);
+                                    });
+                                    xhr.send();
+                                };
+
+                                var blobToFile = function (blob, name) {
+                                    blob.lastModifiedDate = new Date();
+                                    blob.name = name;
+                                    return blob;
+                                };
+
+                                var getFileObject = function(filePathOrUrl, cb) {
+                                    getFileBlob(filePathOrUrl, function (blob) {
+                                        cb(blobToFile(blob, 'test.jpg'));
+                                    });
+                                };
+
+                                //需要编辑的图片列表
+                                var picList = [];
+                                $.each(picList, function(index,item){
+                                    getFileObject(item, function (fileObject) {
+                                        var wuFile = new WebUploader.Lib.File(WebUploader.guid('rt_'),fileObject);
+                                        var file = new WebUploader.File(wuFile);
+                                        uploader.addFiles(file)
+                                    })
+                                });
+
+
+
+
+
+
+
                                 // 拖拽时不接受 js, txt 文件。
                                 uploader.on( 'dndAccept', function( items ) {
                                     var denied = false,
@@ -366,7 +423,6 @@
 
                                 uploader.on('uploadSuccess', function(file,response) {
                                     // alert(response)
-                                    console.log('==11111==',response);
                                     if(response.state == "SUCCESS"){
                                         var url = $('#cover').val()+response.url+",";
                                         $('#cover').val(url);

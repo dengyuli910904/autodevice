@@ -3,6 +3,7 @@
 <html>
 <head>
 @include('admin.profile._meta')
+
 @yield('styles')
 
 </head>

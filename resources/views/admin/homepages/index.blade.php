@@ -26,7 +26,7 @@
                         <th width="200">类型</th>
                         <th width="300">跳转链接</th>
                         <th width="230">封面</th>
-                        <th>描述</th>
+                        {{--<th>描述</th>--}}
                         <th width="80">排序</th>
                         <th width="150">更新时间</th>
                         <th width="60">发布状态</th>
@@ -46,10 +46,10 @@
                                 @endif
                             </td>
                             <td>
-                                <img src="{{ $val->cover }}" class="picture-thumb" width="430px">
+                                <img src="{{ $val->cover }}" class="picture-thumb" width="230px">
                             </td>
-                            <td>{{ $val->description }}</td>
-                            <td>{{$val->sort}}</td>
+{{--                            <td>{{ $val->description }}</td>--}}
+                            <td>{{$val->order}}</td>
                             <td>{{ $val->created_at }}</td>
                             <td class="td-status">
                                 @if(!$val->is_hidden )
@@ -69,11 +69,11 @@
                                         <i class="Hui-iconfont">&#xe6dc;</i>
                                     </a>
                                 @endif
-                                    <a style="text-decoration:none" class="ml-5" onClick="picture_edit('编辑','{{ url('homepage/edit') }}','{{ $val->uuid }}')" href="javascript:;" title="编辑">
+                                    <a style="text-decoration:none" class="ml-5" onClick="picture_edit('编辑','{{ url('homepage/edit') }}','{{ $val->id }}')" href="javascript:;" title="编辑">
                                         <i class="Hui-iconfont">&#xe6df;</i>
                                     </a>
 
-                                    <a style="text-decoration:none" class="ml-5" onClick="picture_del(this,'{{ $val->uuid }}')" href="javascript:;" title="删除">
+                                    <a style="text-decoration:none" class="ml-5" onClick="picture_del(this,'{{ $val->id }}')" href="javascript:;" title="删除">
                                         <i class="Hui-iconfont">&#xe6e2;</i>
                                     </a>
                             </td>

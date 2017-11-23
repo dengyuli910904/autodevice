@@ -39,7 +39,7 @@ class HomepageController extends Controller
     public function store(Request $request)
     {
         $data = $request->all();
-        if($data['type'] != 1){
+        if($data['htype'] != 1){
             $page = Homepage::where('type',$data['type'])->where('ids',$data['id'])->first();
             if($page){
                 return Redirect::back()->withInput()->withErrors('该记录已存在！');
@@ -48,10 +48,10 @@ class HomepageController extends Controller
         $page = new Homepage();
         $page->id = UUID::generate();
         $page->ids = $data['ids'];
-        $page->type = $data['type'];
+        $page->type = $data['htype'];
         $page->cover = $data['cover'];
         $page->url = $data['url'];
-        $page->order = $data['order'];
+        $page->order = $data['sort'];
         $result = $page->save();
         if($result){
             return Redirect::back();

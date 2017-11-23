@@ -125,6 +125,12 @@ class BrandController extends Controller
             $root = [];
             foreach ($type as $val){
                 if($val->level == 0){
+                    $val->is_choose = false;
+                    foreach ($brandtype as $bt){
+                        if($bt->type_id == $val->id){
+                            $val->is_choose = true;
+                        }
+                    }
                     array_push($root,$val);
                 }
             }
@@ -132,6 +138,12 @@ class BrandController extends Controller
                 $child = [];
                 foreach ($type as $val){
                     if($r->id == $val->pid){
+                        $val->is_choose = false;
+                        foreach ($brandtype as $bt){
+                            if($bt->type_id == $val->id){
+                                $val->is_choose = true;
+                            }
+                        }
                         array_push($child,$val);
                     }
                 }

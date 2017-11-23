@@ -73,13 +73,13 @@
 					<tbody>
 					@foreach($data['pid'] as $p)
 						<tr>
-							<td style="width: 150px;">
+							<td style="width: 150px;" class="parent_type">
 								<label><input type="checkbox" name="pid[]" value="{{$p->id}}">{{$p->name}}</label>
 							</td>
-							<td>
+							<td class="child-type">
 								@foreach($p->child as $c)
-									<label><input type="checkbox" name="pid[]" value="{{$c->id}}">{{$c->name}}</label>
-									@endforeach
+									<label><input type="checkbox" disabled="true" name="pid[]" value="{{$c->id}}">{{$c->name}}</label>
+								@endforeach
 							</td>
 						</tr>
 						@endforeach
@@ -162,22 +162,11 @@ $(function(){
     var ue = UE.getEditor('editor');
 });
 $(function(){
-    $('#permission_text').change(function(){
-        var searchStr = $(this).val();
-        if (searchStr) {
-            var flag = 0;
-            var options = $('#permission_list').children();
-            for (var i = 0, len = options.length; i < len; i++) {
-                if (!flag && $(options[i]).text().indexOf(searchStr) >= 0) {
-                    flag = 1;
-                    $(options[i]).attr('selected', 'selected');
-                    break;
-                }
-            }
-            if (!flag) {
-                $('#permission_list option:first').attr('selected', 'selected');
-            }
+    $('#category tr td.parent_type :checkbox').change(function(){
+        if(!$(this)[0].checked){
+            $(this).parents('tr').find('.child-type :checkbox').attr('checked',false);
         }
+        $(this).parents('tr').find('.child-type :checkbox').attr('disabled',!$(this)[0].checked);
     });
 
 });

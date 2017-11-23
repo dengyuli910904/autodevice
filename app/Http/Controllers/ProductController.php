@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Redirect;
 use DB;
 use UUID;
 use App\Models\Product_type;
+use App\Models\Product_pictures;
 
 
 class ProductController extends Controller
@@ -137,13 +138,19 @@ class ProductController extends Controller
         $data['product'] = Product::find($id);
         $type = Type::where('is_hidden',0)->orderBy('tree', 'asc')->get(['id', 'name', 'level','pid']);
         $ptype = Product_type::where('product_id',$id)->select('type_id')->get();
+        $logo = Product_pictures::join('tb_pictures','tb_product_pictures.pictures_id','=','tb_pictures.id')->where('tb_product_pictures.product_id',$id)->select('tb_pictures.path')->get();
+        $plogo =[];
+        foreach ($logo as $l){
+            array_push($plogo,$l->path);
+        }
+        $data['logo'] = $plogo;
         $root = [];
         foreach ($type as $val){
             if($val->level == 0){
-                $val->ischoose = false;
+                $val->is_choose = false;
                 foreach ($ptype as $pt){
                     if($val->id == $pt->type_id){
-                        $val->ischoose = true;
+                        $val->is_choose = true;
                     }
                 }
                 array_push($root,$val);
@@ -153,10 +160,10 @@ class ProductController extends Controller
             $child = [];
             foreach ($type as $val){
                 if($r->id == $val->pid){
-                    $val->ischoose = false;
+                    $val->is_choose = false;
                     foreach ($ptype as $pt){
                         if($val->id == $pt->type_id){
-                            $val->ischoose = true;
+                            $val->is_choose = true;
                         }
                     }
                     array_push($child,$val);

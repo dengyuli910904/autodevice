@@ -22,11 +22,11 @@
                     @foreach($data['pid'] as $p)
                         <tr>
                             <td style="width: 150px;">
-                                <label><input type="checkbox" name="pid[]" value="{{$p->id}}">{{$p->name}}</label>
+                                <label><input type="checkbox" @if($p->is_choose) checked="true"@endif name="pid[]" value="{{$p->id}}">{{$p->name}}</label>
                             </td>
                             <td>
                                 @foreach($p->child as $c)
-                                    <label><input type="checkbox" name="pid[]" value="{{$c->id}}">{{$c->name}}</label>
+                                    <label><input type="checkbox" @if($c->is_choose) checked="true"@endif name="pid[]" value="{{$c->id}}">{{$c->name}}</label>
                                 @endforeach
                             </td>
                         </tr>
