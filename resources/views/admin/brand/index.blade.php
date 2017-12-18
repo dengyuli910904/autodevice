@@ -26,7 +26,7 @@
 							<th width="50">序号</th>
 							<th width="200">品牌名称</th>
 							<th width="100">品牌LOGO</th>
-							<th>品牌描述</th>
+							{{--<th>品牌描述</th>--}}
 							<th width="150">更新时间</th>
 							<th width="60">发布状态</th>
 							<th width="100">操作</th>
@@ -41,9 +41,9 @@
 							<td>
 								<img width="100" class="picture-thumb" src="{{ $p->logo }}">
 							</td>
-							<td class="text-l">
-									{{ $p->description }}
-							</td>
+							{{--<td class="text-l">--}}
+									{{--{{ $p->description }}--}}
+							{{--</td>--}}
 							<td>{{ $p->updated_at }}</td>
 							<td class="td-status">
 								@if(!$p->is_hidden )
@@ -93,7 +93,7 @@
 		"bStateSave": true,//状态保存
 		"aoColumnDefs": [
 		  //{"bVisible": false, "aTargets": [ 3 ]} //控制列的隐藏显示
-		  {"orderable":false,"aTargets":[0,7]}// 制定列不参与排序
+		  {"orderable":false,"aTargets":[0,5]}// 制定列不参与排序
 		]
 	});
 	/*图片-添加*/

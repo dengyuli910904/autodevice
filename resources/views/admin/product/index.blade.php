@@ -23,12 +23,12 @@
 						<tr class="text-c">
 							<th width="40"><input name="" type="checkbox" value=""></th>
 							<th width="50">序号</th>
-							<th width="200">产品名称</th>
+							<th width="100">产品名称</th>
 							<th>产品简介</th>
-							<th width="150">是否有库存</th>
-							<th width="150">是否优惠</th>
-							<th width="150">是否特价</th>
-							<th width="150">更新时间</th>
+							<th width="80">是否有库存</th>
+							<th width="80">是否优惠</th>
+							<th width="80">是否特价</th>
+							<th width="80">更新时间</th>
 							<th width="60">发布状态</th>
 							<th width="100">操作</th>
 						</tr>

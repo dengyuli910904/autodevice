@@ -25,7 +25,7 @@
                     <input type="text" class="input-text" value="" placeholder="分类关键字" id="permission_text" >
                 </div>
                 <div class="formControls col-xs-4 col-sm-4">
-                    <select name="pid" class="select" required="required" id="permission_list">
+                    <select name="pid" class="select input-text" required="required" id="permission_list">
                         <option value="0">请选择</option>
                         @foreach($data['pid'] as $pid)
                             <option value="{{ $pid['id'] }}"

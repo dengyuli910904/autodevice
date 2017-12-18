@@ -2,6 +2,9 @@
 @extends('admin.layouts.layer')
 @section('styles')
 	<link href="{{ asset('admin/lib/webuploader/0.1.5/webuploader.css') }}" rel="stylesheet" type="text/css" />
+	<link rel="stylesheet" type="text/css" href="{{asset('admin/fileinput/css/fileinput.css')}}">
+	<link rel="stylesheet" type="text/css" href="{{asset('admin/fileinput/css/fileinput-rtl.min.css')}}">
+	<link href="{{ asset('admin/css/font-awesome.min.css') }}" media="all" rel="stylesheet" type="text/css"/>
 	<style>
 		.table tr td { border: 1px solid #e5e5e5;}
 	</style>
@@ -10,12 +13,12 @@
 	<div class="page-container">
 	<form class="form form-horizontal" id="form-article-add" action="{{ url('product/store') }}" method="POST">
 		@if (count($errors) > 0)
-			<div class="row cl">
-				<label class="form-label col-3"></label>
-				<div class="formControls col-8">发生错误</div>
+			<div class="row cl error">
+				<label class="form-label col-xs-4 col-sm-2"></label>
+				<div class="formControls col-xs-8 col-sm-9">发生错误</div>
 				@foreach ($errors->all() as $error)
-					<label class="form-label col-3"></label>
-					<div class="formControls col-8">
+					<label class="form-label col-xs-4 col-sm-2"></label>
+					<div class="formControls col-xs-8 col-sm-9">
 						{{ $error }}
 					</div>
 				@endforeach
@@ -35,7 +38,7 @@
 			</div>
 		</div>
 		<div class="row cl">
-			<label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>产品版本：</label>
+			<label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>产品型号：</label>
 			<div class="formControls col-xs-8 col-sm-9">
 				<input type="text" class="input-text" value="" placeholder="" id="" name="version">
 			</div>
@@ -55,7 +58,7 @@
 		<div class="row cl">
 			<label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>是否特价：</label>
 			<div class="formControls col-xs-8 col-sm-9">
-				<label><input type="checkbox" name="is_sale" value="1">有库存</label>
+				<label><input type="checkbox" name="is_sale" value="1">特价</label>
 			</div>
 		</div>
 		<div class="row cl">
@@ -64,12 +67,25 @@
 				<label><input type="checkbox" name="is_discounts" value="1">优惠</label>
 			</div>
 		</div>
-
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>所属品牌：</label>
+			{{--<div class="formControls col-xs-4 col-sm-5">--}}
+				{{--<input type="text" class="input-text" value="" placeholder="分类关键字" id="permission_text" >--}}
+			{{--</div>--}}
+			<div class="formControls col-xs-8 col-sm-9">
+				<select name="brand_id" class="select input-text" required="required" id="brand_id">
+					<option value="0">请选择</option>
+					@foreach($data['brand'] as $b)
+						<option value="{{ $b['id'] }}">{{$b['name']}}</option>
+					@endforeach
+				</select>
+			</div>
+		</div>
 
 		<div class="row cl">
 			<label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>产品类型：</label>
 			<div class="form-controls col-xs-8 col-sm-9">
-				<table class="table">
+				<table class="table" id="category">
 					<tbody>
 					@foreach($data['pid'] as $p)
 						<tr>
@@ -106,9 +122,14 @@
 				{{--</select>--}}
 			{{--</div>--}}
 		{{--</div>--}}
-		
-		
-		
+
+
+			<div class="row cl">
+				<label class="form-label col-xs-4 col-sm-2">产品资料：</label>
+				<div class="formControls col-xs-8 col-sm-9">
+					<input type="file" name="file" id="file" multiple class="file-loading" />
+				</div>
+			</div>
 		<div class="row cl">
 			<label class="form-label col-xs-4 col-sm-2">产品配图：</label>
 			<div class="formControls col-xs-8 col-sm-9">
@@ -139,6 +160,8 @@
 
 
         <input type="hidden" name="cover" id="cover" value=" ">
+                <input type="hidden" name="product_file_url" id="product_file" value=" ">
+                <input type="hidden" name="product_file_name" id="product_file" value="">
                 <input type="hidden" name="_token" value="{{ csrf_token() }}">
 		<div class="row cl">
 			<div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-2">
@@ -157,10 +180,21 @@
     <script type="text/javascript" src="{{ asset('admin/lib/ueditor/1.4.3/ueditor.config.js') }}"></script>
     <script type="text/javascript" src="{{ asset('admin/lib/ueditor/1.4.3/ueditor.all.js') }}"> </script>
     <script type="text/javascript" src="{{ asset('admin/lib/ueditor/1.4.3/lang/zh-cn/zh-cn.js') }}"></script>
+	<script type="text/javascript" src="{{ asset('admin/fileinput/js/fileinput.js')}}"></script>
+	<script type="text/javascript" src="{{ asset('admin/fileinput/js/locales/zh.js')}}"></script>
 <script type="text/javascript">
 $(function(){
     var ue = UE.getEditor('editor');
+    $('#category tr td.parent_type :checkbox').change(function(){
+        if(!$(this)[0].checked){
+            $(this).parents('tr').find('.child-type :checkbox').attr('checked',false);
+        }
+        $(this).parents('tr').find('.child-type :checkbox').attr('disabled',!$(this)[0].checked);
+    });
 });
+
+
+
 $(function(){
     $('#category tr td.parent_type :checkbox').change(function(){
         if(!$(this)[0].checked){
@@ -170,6 +204,58 @@ $(function(){
     });
 
 });
+
+
+$("#file").fileinput({
+    language: 'zh', //设置语言
+    uploadUrl: "{{url('common/fileupload')}}", //上传的地址
+    allowedFileExtensions: ['pdf','doc','docx','xls','xlsx'],//接收的文件后缀
+    //uploadExtraData:{"id": 1, "fileName":'123.mp3'},
+    uploadAsync: true, //默认异步上传
+    showUpload: true, //是否显示上传按钮
+    showRemove : true, //显示移除按钮
+    showPreview : false, //是否显示预览
+    showCaption: true,//是否显示标题
+    browseClass: "btn btn-primary", //按钮样式
+    dropZoneEnabled: false,//是否显示拖拽区域
+    //minImageWidth: 50, //图片的最小宽度
+    //minImageHeight: 50,//图片的最小高度
+    //maxImageWidth: 1000,//图片的最大宽度
+    //maxImageHeight: 1000,//图片的最大高度
+    maxFileSize: 2048000,//单位为kb，如果为0表示不限制文件大小
+    //minFileCount: 0,
+    maxFileCount: 1, //表示允许同时上传的最大文件个数
+    enctype: 'multipart/form-data',
+    validateInitialCount:true,
+    previewFileIcon: "<i class='glyphicon glyphicon-king'></i>",
+    msgFilesTooMany: "选择上传的文件数量({n}) 超过允许的最大数值{m}！",
+});
+//异步上传返回结果处理
+$('#file').on('fileerror', function(event, data, msg) {
+    alert(msg);
+});
+//异步上传返回结果处理
+$("#file").on("fileuploaded", function (event, data, previewId, index) {
+    var obj = data.response;
+    $('#product_file_url').val(obj.url);
+    $('#product_file_name').val(obj.original);
+});
+//同步上传错误处理
+$('#file').on('filebatchuploaderror', function(event, data, msg) {
+});
+//同步上传返回结果处理
+$("#file").on("filebatchuploadsuccess", function (event, data, previewId, index) {
+
+});
+
+//上传前
+$('#file').on('filepreupload', function(event, data, previewId, index) {
+    var form = data.form, files = data.files, extra = data.extra,
+        response = data.response, reader = data.reader;
+});
+
+
+
 
 (function( $ ){
     // 当domReady的时候开始初始化

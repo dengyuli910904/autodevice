@@ -51,6 +51,9 @@ class TypeController extends Controller
             if ($data['pid'] > 0) {
                 $pid = type::find($data['pid']);
                 if ($pid) {
+                    if(((integer)$pid['level']-1) > ENV('TYPE_LEVEL_LIMIT')){
+                        return redirect()->back()->withInput()->withErrors('目前限制产品类型最大层级是'.ENV('TYPE_LEVEL_LIMIT').'级');
+                    }
                     $level = $pid['level'] + 1;
                     $tree = $pid['tree'];
                 }

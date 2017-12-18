@@ -134,23 +134,6 @@ $(function(){
 //		}
 
 	});
-//    $('#permission_text').change(function(){
-//        var searchStr = $(this).val();
-//        if (searchStr) {
-//            var flag = 0;
-//            var options = $('#permission_list').children();
-//            for (var i = 0, len = options.length; i < len; i++) {
-//                if (!flag && $(options[i]).text().indexOf(searchStr) >= 0) {
-//                    flag = 1;
-//                    $(options[i]).attr('selected', 'selected');
-//                    break;
-//                }
-//            }
-//            if (!flag) {
-//                $('#permission_list option:first').attr('selected', 'selected');
-//            }
-//        }
-//    });
 });
 
 
@@ -348,8 +331,6 @@ $(function(){
         });
 
         uploader.on('uploadSuccess', function(file,response) {
-            // alert(response)
-            console.log('==11111==',response);
             if(response.state == "SUCCESS"){
                 $('#cover').val(response.url);
             }

@@ -10,6 +10,11 @@ use DB;
 use UUID;
 use App\Models\Product_type;
 use App\Models\Product_pictures;
+use App\Models\Brand;
+use App\Models\Brand_product;
+use App\Models\Brand_type;
+use App\Models\Product_file;
+use App\Models\File;
 
 
 class ProductController extends Controller
@@ -34,6 +39,7 @@ class ProductController extends Controller
     {
         $data = [];
         $type = Type::where('is_hidden',0)->orderBy('tree', 'asc')->get(['id', 'name', 'level','pid']);
+        $brand = Brand::where('is_hidden','0')->select('id','name')->orderby('updated_at','desc')->get();
         $root = [];
         foreach ($type as $val){
             if($val->level == 0){
@@ -51,6 +57,7 @@ class ProductController extends Controller
             array_add($r,'child',$child);
         }
 //        return $root;
+        $data['brand'] = $brand;
         $data['pid'] = $root;
         return view('admin.product.create',['data'=>$data]);
     }
@@ -63,6 +70,16 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
+        $this->validate($request, [
+            'name' => 'required|string',
+            'version' => 'required',
+//            'brand_id' => 'required|integer',
+            'pid' => 'required'
+        ]);
+//        return $request->all();
+        if($request->input('brand_id') == "0"){
+            return Redirect::back()->withInput()->withErrors('请选择产品所属品牌');
+        }
         $data = $request->all();
 
         $product = Product::where('name',$data['name'])->where('intro',$data['intro'])->first();
@@ -73,23 +90,49 @@ class ProductController extends Controller
             $product->name = $data['name'];
             $product->intro = $data['intro'];
             $product->version = $data['version'];
-            $product->description = $data['editorValue'];
-//            $product->parameters = $data['parameters'];
-            $product->is_store = $data['is_store'];
-            $product->is_hidden = $data['is_hidden'];
-            $product->is_sale = $data['is_sale'];
-            $product->is_discounts = $data['is_discounts'];
+            if($request->has('editorValue')){
+                $product->description = $data['editorValue'];
+            }
 
+            if($request->has('is_store')){
+                $product->is_store = $data['is_store'];
+            }
+
+            if($request->has('is_hidden')){
+                $product->is_hidden = $data['is_hidden'];
+            }
+
+            if($request->has('is_sale')){
+                $product->is_sale = $data['is_sale'];
+            }
+
+            if($request->has('is_discounts')){
+                $product->is_discounts = $data['is_discounts'];
+            }
+
+
+//            $product->is_hidden = $data['is_hidden'];
+//            $product->is_sale = $data['is_hidden'];
+//            $product->is_discounts = $data['is_discounts'];
 
             $product->save();
+
+            $b_pro = new Brand_product();
+            $b_pro->id = UUID::generate();
+            $b_pro->brand_id = $data['brand_id'];
+            $b_pro->product_id = $id;
+            $b_pro->save();
+
+            //存储产品类型
             if(!empty($data['pid'])){
                 $pid = [];
                 foreach ($data['pid'] as $p){
-                    array_push($pid,['id'=>UUID::generate(),'brand_id'=>$id,'type_id'=>$p]);
+                    array_push($pid,['id'=>UUID::generate(),'product_id'=>$id,'type_id'=>$p]);
                 }
                 $brandtype = DB::table('tb_product_type')->insert($pid);
             }
 
+            //存储产品图片
             if(!empty($data['cover'])){
                 $pic = explode(',',$data['cover']);
                 $pictures = [];
@@ -107,6 +150,23 @@ class ProductController extends Controller
                     $result = DB::table('tb_pictures')->insert($pictures);
                     DB::table('tb_product_pictures')->insert($product_pic);
                 }
+            }
+
+            //存储产品资料
+            if(!empty($data['product_file'])){
+                $file = new File();
+                $file_id = (string)UUID::generate();
+                $file->id = $file_id;
+                $file->name = $data['product_file_name'];
+                $file->path = $data['product_file_path'];
+                if($file->save()){
+                    $p_file = new Product_file();
+                    $p_file->id = UUID::generate();
+                    $p_file->product_id = $id;
+                    $p_file->file_id = $file_id;
+                }
+
+
             }
             return Redirect::back();
         }else{
